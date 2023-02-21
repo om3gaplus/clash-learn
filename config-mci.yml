@@ -1,0 +1,68 @@
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: Rule
+log-level: info
+external-controller: 0.0.0.0:9090
+proxies:
+  - name: Irancell (ngin-x reverse proxy)
+    type: vmess
+    server: mtn.hostgozarr.com
+    port: "443"
+    uuid: a95675cc-0574-4f3d-a940-5f69fd90add2
+    alterId: "0"
+    cipher: auto
+    tls: true
+    skip-cert-verify: true
+    network: ws
+    ws-opts:
+      path: /downloader/2083
+      headers:
+        Host: tummler.ir
+    _index: 0
+  - name: Hamrah-avval (ngin-x reverse proxy)
+    type: vmess
+    server: mci.hostgozarr.com
+    port: "443"
+    uuid: a95675cc-0574-4f3d-a940-5f69fd90add2
+    alterId: "0"
+    cipher: auto
+    tls: true
+    skip-cert-verify: true
+    network: ws
+    ws-opts:
+      path: /downloader/2083
+      headers:
+        Host: tummler.ir
+proxy-groups:
+  - name: proxy_with_rule
+    type: select
+    proxies:
+      - Hamrah-avval (ngin-x reverse proxy)
+      - Irancell (ngin-x reverse proxy)
+rule-providers:
+  iran:
+    type: http
+    behavior: classical
+    url: https://github.com/SamadiPour/iran-hosted-domains/releases/latest/download/clash_rules.yaml
+    path: ./ruleset/iran.yaml
+    interval: 432000
+rules:
+  - DOMAIN,www.msftconnecttest.com,DIRECT
+  - DOMAIN-SUFFIX,ir,DIRECT
+  - GEOIP,IR,DIRECT
+  - MATCH,proxy_with_rule
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR6,::1/128,DIRECT,no-resolve
+  - IP-CIDR6,fc00::/7,DIRECT,no-resolve
+  - IP-CIDR6,fe80::/10,DIRECT,no-resolve
+  - IP-CIDR6,fd00::/8,DIRECT,no-resolve
+  - IP-CIDR,8.8.8.8/32,proxy_with_rule
+  - IP-CIDR,8.8.4.4/32,proxy_with_rule
+  - IP-CIDR,1.1.1.1/32,proxy_with_rule
+  - IP-CIDR,1.0.0.1/32,proxy_with_rule
+  - DOMAIN-SUFFIX,local,DIRECT
